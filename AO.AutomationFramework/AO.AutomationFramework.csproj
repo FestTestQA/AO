@@ -192,7 +192,6 @@
     <Compile Include="Core\BusinessLogic\Helpers\DriverHelper.cs" />
     <Compile Include="Core\BusinessLogic\Helpers\DriverOption\FirefoxOptionsHelper.cs" />
     <Compile Include="Core\BusinessLogic\Helpers\EntityStorage.cs" />
-    <Compile Include="Core\BusinessLogic\Helpers\ImageHelper.cs" />
     <Compile Include="Core\BusinessLogic\Helpers\ScreenShotHelper.cs" />
     <Compile Include="Core\BusinessLogic\Helpers\StringHelper.cs" />
     <Compile Include="Core\BusinessLogic\Helpers\WaitHelper.cs" />

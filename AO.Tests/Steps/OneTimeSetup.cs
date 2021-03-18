@@ -4,7 +4,6 @@ using NUnit.Framework.Internal;
 using OpenQA.Selenium;
 using System;
 using System.Diagnostics;
-using System.IO;
 
 namespace AO.Tests
 {

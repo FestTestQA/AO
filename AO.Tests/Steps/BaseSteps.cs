@@ -75,11 +75,6 @@ namespace AO.Tests.Steps
             return task.Wait(TimeSpan.FromMilliseconds(timeout)) ? task.Result : null;
         }
 
-        internal virtual void WhenIhaveEditContractButton()
-        {
-            new PageBase(Driver).CancelButton.ClickWhenClickable();
-        }
-
         internal T GetPage<T>() where T : PageBase
         {
             try

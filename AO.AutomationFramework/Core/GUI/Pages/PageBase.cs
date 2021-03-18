@@ -1,6 +1,5 @@
 ﻿using AO.AutomationFramework.Core.BusinessLogic.Extensions;
 using AO.AutomationFramework.Core.BusinessLogic.Helpers;
-using AO.AutomationFramework.Core.GUI.ControlTypes;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
@@ -12,42 +11,6 @@ namespace AO.AutomationFramework.Core.GUI.Pages
     public class PageBase
     {
         protected IWebDriver Driver;
-
-        private IWebElement LoadingMask
-        {
-            get { return Driver.FindElement(By.CssSelector(".k-loading-mask")); }
-        }
-
-        public virtual IWebElement Title
-        {
-            get { return Driver.FindElementWithDelay(By.TagName("h1")); }
-        }
-
-        public bool IsLoadingMaskDisplayed
-        {
-            get
-            {
-                try
-                {
-                    bool displayed = LoadingMask.Displayed;
-                    return displayed;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-        }
-
-        public IWebElement CancelButton
-        {
-            get { return Driver.FindElement(By.Id("btn-cancel-property")); }
-        }
-
-        public IWebElement SaveButton
-        {
-            get { return Driver.FindElement(By.Id("btn-save-property")); }
-        }
 
         public PageBase(IWebDriver driver)
         {
@@ -72,20 +35,6 @@ namespace AO.AutomationFramework.Core.GUI.Pages
             }
 
             return Driver.FindElementWithDelay(By.XPath(expression));
-        }
-
-        protected IWebElement GetCheckBoxFromTable(IWebElement table, string nameToSelect)
-        {
-            var list = table.FindElements(By.TagName("tr"));
-            foreach (var row in list)
-            {
-                var itemsInRow = row.FindElements(By.TagName("td"));
-                if (itemsInRow[1].Text == nameToSelect)
-                {
-                    return itemsInRow[0].FindElement(By.TagName("input"));
-                }
-            }
-            return null;
         }
 
         public IWebElement GetLabelByText(string text)
@@ -115,40 +64,8 @@ namespace AO.AutomationFramework.Core.GUI.Pages
             Driver.Navigate().GoToUrl(link);
         }
 
-        public void SelectFromComobobox(IWebElement combobox, string textToSelect)
-        {
-            var table = new SelectElement(combobox);
-            table.SelectByText(textToSelect);
-        }
-
         public void LogOut()
         {
-            Driver.TryGetElement(() => Driver.FindElement(By.Id("stage_name_menu")), 5000).Click();
-            Driver.TryGetElement(() => Driver.FindElement(By.XPath("//*[text()='Logout']")), 5000).Click();
-        }
-
-        public void OpenAccountSettings()
-        {
-            Driver.TryGetElement(() => Driver.FindElementWithDelay(By.Id("stage_name_menu")), 5000).Click();
-            Driver.TryGetElement(() => Driver.FindElement(By.XPath("//*[text()='Account settings']")), 5000).Click();
-        }
-
-        public bool MessageExists(string message)
-        {
-            return WaitHelper.WaitUntil(() => Driver.PageSource.Contains(message));
-        }
-
-        public bool MessageDisplayed(string message)
-        {
-            try
-            {
-                Driver.FindElement(By.XPath("//*[contains(text(),'" + message + "')]"));
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
         public bool AlertExists(string message)
@@ -200,33 +117,6 @@ namespace AO.AutomationFramework.Core.GUI.Pages
             return Driver;
         }
 
-        //public void RestartBrowser()
-        //{
-        //    Driver.Quit();
-        //    switch (CommonVar.browser.ToString().ToLower())
-        //    {
-        //        case "chrome":
-        //            Driver = new ChromeDriver(Path.GetFullPath(@"Tools"));
-        //            break;
-        //        case "ie":
-        //            Driver = new InternetExplorerDriver(@"Tools", new InternetExplorerOptions
-        //            {
-        //                IntroduceInstabilityByIgnoringProtectedModeSettings = true
-        //            });
-        //            break;
-        //        case "safari":
-        //            Driver = new SafariDriver();
-        //            break;
-        //        case "firefox":
-        //            Driver = new FirefoxDriver();
-        //            break;
-        //        default:
-        //            throw new Exception("Specified browser is not supported.");
-        //    }
-        //    PageHelper.Initialize(Driver);
-        //    Driver.Manage().Window.Maximize();
-        //}
-
         public void JavaScriptClick(IWebElement element)
         {
             var jse = (IJavaScriptExecutor)Driver;
@@ -240,58 +130,6 @@ namespace AO.AutomationFramework.Core.GUI.Pages
                                   "arguments[0].dispatchEvent(evt);";
             var jse = (IJavaScriptExecutor)Driver;
             jse.ExecuteScript(script, element);
-        }
-
-        #region SideBar
-
-        public IWebElement SideBarToggle
-        {
-            get { return Driver.FindElement(By.CssSelector(".main-nav-toggle")); }
-        }
-
-        public IWebElement HomeButton
-        {
-            get { return Driver.FindElement(By.CssSelector(".nav > li:nth-child(1) > a:nth-child(2)")); }
-        }
-
-        public IWebElement UserName
-        {
-            get { return Driver.FindElement(By.CssSelector("#logoutForm > a:nth-child(2)")); }
-        }
-
-        public object PageWebElement { get; private set; }
-
-        #endregion SideBar
-
-        private IWebElement NotificationsContainer
-        {
-            get
-            {
-                return Driver.FindElementsByAttributeStartsWith("div", "class", "notices is-bottom").ElementAt(0);
-            }
-        }
-
-        public List<(IWebElement Toast, string Body, IWebElement Link, IWebElement Close)> Notifications
-        {
-            get
-            {
-                List<(IWebElement Toast, string Body, IWebElement Link, IWebElement Close)> notificationList = new List<(IWebElement Toast, string Body, IWebElement Link, IWebElement Close)>();
-                List<IWebElement> els = new List<IWebElement>();
-                try
-                {
-                    els = NotificationsContainer.FindElementsByAttributeContains("div", "role", "alert").ToList();
-                }
-                catch { }
-                foreach (var notification in els)
-                {
-                    var body = notification.FindElement(By.ClassName("body")).Text;
-                    var links = notification.FindElementsByAttributeStartsWith("a", "class", "action-link");
-                    var link = links.Count > 0 ? Driver.TryGetElement(() => links.ElementAt(0)) : null;
-                    var close = notification.FindElement(By.ClassName("close-toast"));
-                    notificationList.Add((notification, body, link, close));
-                }
-                return notificationList;
-            }
         }
     }
 }

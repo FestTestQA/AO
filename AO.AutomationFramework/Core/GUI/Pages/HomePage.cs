@@ -1,8 +1,5 @@
 ﻿using AO.AutomationFramework.Core.BusinessLogic.Extensions;
-using AO.AutomationFramework.Core.BusinessLogic.Helpers;
-using AO.AutomationFramework.Core.GUI.ControlTypes;
 using OpenQA.Selenium;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AO.AutomationFramework.Core.GUI.Pages
